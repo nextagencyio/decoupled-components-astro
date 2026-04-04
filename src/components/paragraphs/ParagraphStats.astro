@@ -1,0 +1,47 @@
+---
+import { clsx } from 'clsx'
+import type { ParagraphStats as ParagraphStatsType } from '@/lib/types'
+import Badge from '../ui/Badge.astro'
+
+interface Props extends ParagraphStatsType {}
+
+const { eyebrow, title, backgroundColor, stats } = Astro.props
+const isLight = backgroundColor === 'light'
+---
+
+<section class={clsx('section-padding', isLight ? 'bg-gray-50' : 'bg-white')}>
+  <div class="container-wide">
+    {(eyebrow || title) && (
+      <div class="text-center mb-12">
+        {eyebrow && (
+          <Badge variant="primary" class="mb-4">
+            {eyebrow}
+          </Badge>
+        )}
+        {title && (
+          <h2 class="text-3xl md:text-4xl font-bold text-gray-900">
+            {title}
+          </h2>
+        )}
+      </div>
+    )}
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+      {(stats ?? []).map((stat) => (
+        <div class="text-center">
+          <div class="text-4xl md:text-5xl font-bold text-primary-600 mb-2">
+            {stat.value}
+          </div>
+          <div class="text-lg font-semibold text-gray-900 mb-1">
+            {stat.label}
+          </div>
+          {stat.description && (
+            <div class="text-sm text-gray-500">
+              {stat.description}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

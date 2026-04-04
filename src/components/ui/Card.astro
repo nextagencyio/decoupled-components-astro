@@ -1,0 +1,33 @@
+---
+import { clsx } from 'clsx'
+
+interface Props {
+  variant?: 'default' | 'bordered' | 'elevated' | 'highlighted'
+  padding?: 'none' | 'sm' | 'md' | 'lg'
+  class?: string
+}
+
+const { variant = 'default', padding = 'md', class: className } = Astro.props
+
+const baseStyles = 'rounded-xl transition-all duration-200'
+
+const variants: Record<string, string> = {
+  default: 'bg-white',
+  bordered: 'bg-white border border-gray-200',
+  elevated: 'bg-white shadow-lg hover:shadow-xl',
+  highlighted: 'bg-white border-2 border-primary-500 shadow-lg',
+}
+
+const paddings: Record<string, string> = {
+  none: '',
+  sm: 'p-4',
+  md: 'p-6',
+  lg: 'p-8',
+}
+
+const classes = clsx(baseStyles, variants[variant], paddings[padding], className)
+---
+
+<div class={classes}>
+  <slot />
+</div>

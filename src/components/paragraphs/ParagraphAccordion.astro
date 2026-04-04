@@ -1,0 +1,64 @@
+---
+/**
+ * Accordion uses a web component (<details>) for interactivity — zero JS shipped.
+ */
+import { clsx } from 'clsx'
+import type { ParagraphAccordion as ParagraphAccordionType } from '@/lib/types'
+import Badge from '../ui/Badge.astro'
+
+interface Props extends ParagraphAccordionType {}
+
+const { eyebrow, title, subtitle, items } = Astro.props
+---
+
+<section class="section-padding bg-gray-50">
+  <div class="container-wide">
+    <div class="max-w-3xl mx-auto">
+      {(eyebrow || title || subtitle) && (
+        <div class="text-center mb-12">
+          {eyebrow && (
+            <Badge variant="primary" class="mb-4">
+              {eyebrow}
+            </Badge>
+          )}
+          {title && (
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              {title}
+            </h2>
+          )}
+          {subtitle && (
+            <p class="text-lg text-gray-600">{subtitle}</p>
+          )}
+        </div>
+      )}
+
+      {Array.isArray(items) && items.length > 0 && (
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 divide-y divide-gray-200">
+          {items.map((item, index) => (
+            <details class="group overflow-hidden" open={index === 0}>
+              <summary class="flex w-full items-center justify-between p-6 text-left hover:bg-gray-50 transition-colors cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                <span class="text-lg font-medium text-gray-900 pr-4">
+                  {item.question}
+                </span>
+                <svg
+                  class="flex-shrink-0 w-5 h-5 text-gray-500 transition-transform duration-200 group-open:rotate-180"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </summary>
+              {item.answer && (
+                <div class="px-6 pb-6 prose prose-gray max-w-none" set:html={item.answer} />
+              )}
+            </details>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,41 @@
+---
+import type { ParagraphType } from '@/lib/types'
+import ParagraphHero from './ParagraphHero.astro'
+import ParagraphCardGroup from './ParagraphCardGroup.astro'
+import ParagraphSidebyside from './ParagraphSidebyside.astro'
+import ParagraphAccordion from './ParagraphAccordion.astro'
+import ParagraphQuote from './ParagraphQuote.astro'
+import ParagraphPricing from './ParagraphPricing.astro'
+import ParagraphLogoCollection from './ParagraphLogoCollection.astro'
+import ParagraphStats from './ParagraphStats.astro'
+import ParagraphNewsletter from './ParagraphNewsletter.astro'
+import ParagraphText from './ParagraphText.astro'
+
+interface Props {
+  sections: ParagraphType[]
+}
+
+const { sections } = Astro.props
+
+const componentMap: Record<string, any> = {
+  ParagraphHero,
+  ParagraphCardGroup,
+  ParagraphSidebyside,
+  ParagraphAccordion,
+  ParagraphQuote,
+  ParagraphPricing,
+  ParagraphLogoCollection,
+  ParagraphStat: ParagraphStats,
+  ParagraphNewsletter,
+  ParagraphTextBlock: ParagraphText,
+}
+---
+
+{sections?.map((section) => {
+  const Component = componentMap[section.__typename]
+  if (!Component) {
+    console.warn('Unknown paragraph type:', section.__typename)
+    return null
+  }
+  return <Component {...section} />
+})}

@@ -1,0 +1,141 @@
+---
+import { clsx } from 'clsx'
+import type { ParagraphQuote as ParagraphQuoteType, Testimonial } from '@/lib/types'
+import Badge from '../ui/Badge.astro'
+import Card from '../ui/Card.astro'
+
+interface Props extends ParagraphQuoteType {}
+
+const { eyebrow, title, layout = 'grid', testimonials } = Astro.props
+
+function secureUrl(url: string): string {
+  return url.replace(/^http:\/\//, 'https://')
+}
+---
+
+<section class="section-padding bg-white">
+  <div class="container-wide">
+    {(eyebrow || title) && (
+      <div class="text-center max-w-3xl mx-auto mb-12 md:mb-16">
+        {eyebrow && (
+          <Badge variant="primary" class="mb-4">
+            {eyebrow}
+          </Badge>
+        )}
+        {title && (
+          <h2 class="text-3xl md:text-4xl font-bold text-gray-900">
+            {title}
+          </h2>
+        )}
+      </div>
+    )}
+
+    {layout === 'single' && testimonials?.length > 0 ? (
+      <div class="max-w-3xl mx-auto">
+        <Card variant="bordered" class="h-full flex flex-col">
+          {testimonials[0].rating && (
+            <div class="flex gap-1 mb-4">
+              {[...Array(5)].map((_, i) => (
+                <svg
+                  class={clsx('w-5 h-5', i < testimonials[0].rating! ? 'text-yellow-400 fill-yellow-400' : 'text-gray-200')}
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
+              ))}
+            </div>
+          )}
+          <blockquote class="flex-1 mb-6">
+            <svg class="w-8 h-8 text-primary-200 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V21z" />
+              <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" />
+            </svg>
+            <p class="text-gray-700 leading-relaxed">{testimonials[0].quote}</p>
+          </blockquote>
+          <div class="flex items-center gap-4 pt-4 border-t border-gray-100">
+            {testimonials[0].authorImage?.url ? (
+              <img
+                src={secureUrl(testimonials[0].authorImage.url)}
+                alt={testimonials[0].authorName ?? ''}
+                width="48"
+                height="48"
+                class="rounded-full w-12 h-12 object-cover"
+              />
+            ) : (
+              <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
+                <span class="text-primary-600 font-semibold text-lg">
+                  {testimonials[0].authorName?.charAt(0) ?? '?'}
+                </span>
+              </div>
+            )}
+            <div>
+              <div class="font-semibold text-gray-900">{testimonials[0].authorName}</div>
+              {(testimonials[0].authorTitle || testimonials[0].authorCompany) && (
+                <div class="text-sm text-gray-500">
+                  {testimonials[0].authorTitle}
+                  {testimonials[0].authorTitle && testimonials[0].authorCompany && ' at '}
+                  {testimonials[0].authorCompany}
+                </div>
+              )}
+            </div>
+          </div>
+        </Card>
+      </div>
+    ) : (
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        {(testimonials ?? []).map((testimonial: Testimonial) => (
+          <Card variant="bordered" class="h-full flex flex-col">
+            {testimonial.rating && (
+              <div class="flex gap-1 mb-4">
+                {[...Array(5)].map((_, i) => (
+                  <svg
+                    class={clsx('w-5 h-5', i < testimonial.rating! ? 'text-yellow-400 fill-yellow-400' : 'text-gray-200')}
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                  </svg>
+                ))}
+              </div>
+            )}
+            <blockquote class="flex-1 mb-6">
+              <svg class="w-8 h-8 text-primary-200 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V21z" />
+                <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" />
+              </svg>
+              <p class="text-gray-700 leading-relaxed">{testimonial.quote}</p>
+            </blockquote>
+            <div class="flex items-center gap-4 pt-4 border-t border-gray-100">
+              {testimonial.authorImage?.url ? (
+                <img
+                  src={secureUrl(testimonial.authorImage.url)}
+                  alt={testimonial.authorName ?? ''}
+                  width="48"
+                  height="48"
+                  class="rounded-full w-12 h-12 object-cover"
+                />
+              ) : (
+                <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
+                  <span class="text-primary-600 font-semibold text-lg">
+                    {testimonial.authorName?.charAt(0) ?? '?'}
+                  </span>
+                </div>
+              )}
+              <div>
+                <div class="font-semibold text-gray-900">{testimonial.authorName}</div>
+                {(testimonial.authorTitle || testimonial.authorCompany) && (
+                  <div class="text-sm text-gray-500">
+                    {testimonial.authorTitle}
+                    {testimonial.authorTitle && testimonial.authorCompany && ' at '}
+                    {testimonial.authorCompany}
+                  </div>
+                )}
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+    )}
+  </div>
+</section>

@@ -1,0 +1,68 @@
+---
+import type { ParagraphLogoCollection as ParagraphLogoCollectionType, Logo } from '@/lib/types'
+import Badge from '../ui/Badge.astro'
+
+interface Props extends ParagraphLogoCollectionType {}
+
+const { eyebrow, title, logos } = Astro.props
+
+function secureUrl(url: string): string {
+  return url.replace(/^http:\/\//, 'https://')
+}
+---
+
+<section class="py-12 md:py-16 bg-white border-y border-gray-100">
+  <div class="container-wide">
+    {(eyebrow || title) && (
+      <div class="text-center mb-8">
+        {eyebrow && (
+          <Badge variant="default" class="mb-2">
+            {eyebrow}
+          </Badge>
+        )}
+        {title && (
+          <p class="text-gray-500">{title}</p>
+        )}
+      </div>
+    )}
+
+    <div class="flex flex-wrap items-center justify-center gap-6 md:gap-10 lg:gap-14">
+      {(logos ?? []).map((logo: Logo) => {
+        const hasValidImage = logo.image?.url && logo.image.url.startsWith('http')
+
+        return (
+          <div class="flex items-center justify-center transition-colors">
+            {logo.url ? (
+              <a
+                href={logo.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hover:opacity-100 transition-opacity text-gray-400 hover:text-gray-700"
+              >
+                {hasValidImage ? (
+                  <img
+                    src={secureUrl(logo.image!.url)}
+                    alt={logo.name}
+                    class="h-8 md:h-10 w-auto grayscale hover:grayscale-0 transition-all opacity-60 hover:opacity-100"
+                  />
+                ) : (
+                  <span class="font-semibold text-sm md:text-base">{logo.name}</span>
+                )}
+              </a>
+            ) : hasValidImage ? (
+              <img
+                src={secureUrl(logo.image!.url)}
+                alt={logo.name}
+                class="h-8 md:h-10 w-auto grayscale hover:grayscale-0 transition-all opacity-60 hover:opacity-100"
+              />
+            ) : (
+              <span class="font-semibold text-gray-400 hover:text-gray-700 transition-colors text-sm md:text-base">
+                {logo.name}
+              </span>
+            )}
+          </div>
+        )
+      })}
+    </div>
+  </div>
+</section>

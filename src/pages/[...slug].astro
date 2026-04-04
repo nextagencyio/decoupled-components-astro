@@ -1,0 +1,29 @@
+---
+import SiteLayout from '@/src/layouts/SiteLayout.astro'
+import ParagraphRenderer from '@/src/components/paragraphs/ParagraphRenderer.astro'
+import { getClient } from '@/lib/drupal-client'
+import { transformSections } from '@/lib/drupal-utils'
+import type { NodeLandingPage } from '@/schema/client'
+
+const { slug } = Astro.params
+const path = `/${slug}`
+
+const client = getClient()
+
+let page: NodeLandingPage | null = null
+try {
+  page = await client.getEntryByPath(path) as NodeLandingPage | null
+} catch {
+  // Page not found
+}
+
+if (!page?.sections) {
+  return Astro.redirect('/404')
+}
+
+const sections = transformSections(page.sections)
+---
+
+<SiteLayout title={page.title}>
+  <ParagraphRenderer sections={sections} />
+</SiteLayout>

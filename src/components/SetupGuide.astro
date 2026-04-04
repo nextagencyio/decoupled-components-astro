@@ -1,0 +1,80 @@
+---
+---
+
+<div class="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+  <div class="max-w-2xl w-full bg-white rounded-2xl shadow-lg p-8">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+        <svg class="w-6 h-6 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" x2="12" y1="8" y2="12" />
+          <line x1="12" x2="12.01" y1="16" y2="16" />
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Setup Required</h1>
+        <p class="text-gray-500">Connect to Drupal to load content</p>
+      </div>
+    </div>
+
+    <div class="space-y-6">
+      <div class="bg-gray-50 rounded-xl p-6">
+        <h2 class="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="4 17 10 11 4 5" />
+            <line x1="12" x2="20" y1="19" y2="19" />
+          </svg>
+          Quick Setup (Recommended)
+        </h2>
+        <p class="text-gray-600 mb-4">
+          Run the interactive setup wizard to create a Drupal space and import sample content:
+        </p>
+        <div class="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-sm">
+          <p class="text-gray-400"># Install dependencies and run setup</p>
+          <p>npm install</p>
+          <p>npm run setup</p>
+        </div>
+      </div>
+
+      <div class="border border-gray-200 rounded-xl p-6">
+        <h2 class="font-semibold text-gray-900 mb-3">Manual Setup</h2>
+        <ol class="space-y-3 text-gray-600">
+          <li class="flex gap-3">
+            <span class="flex-shrink-0 w-6 h-6 bg-primary-100 text-primary-700 rounded-full flex items-center justify-center text-sm font-medium">1</span>
+            <span>Create a Drupal space at <a href="https://decoupled.io" class="text-primary-600 hover:underline" target="_blank" rel="noopener noreferrer">Decoupled.io</a></span>
+          </li>
+          <li class="flex gap-3">
+            <span class="flex-shrink-0 w-6 h-6 bg-primary-100 text-primary-700 rounded-full flex items-center justify-center text-sm font-medium">2</span>
+            <span>Copy <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env.example</code> to <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code></span>
+          </li>
+          <li class="flex gap-3">
+            <span class="flex-shrink-0 w-6 h-6 bg-primary-100 text-primary-700 rounded-full flex items-center justify-center text-sm font-medium">3</span>
+            <span>Add your Drupal credentials to the environment file</span>
+          </li>
+          <li class="flex gap-3">
+            <span class="flex-shrink-0 w-6 h-6 bg-primary-100 text-primary-700 rounded-full flex items-center justify-center text-sm font-medium">4</span>
+            <span>Run <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">npm run setup-content</code> to import sample content</span>
+          </li>
+          <li class="flex gap-3">
+            <span class="flex-shrink-0 w-6 h-6 bg-primary-100 text-primary-700 rounded-full flex items-center justify-center text-sm font-medium">5</span>
+            <span>Restart the development server</span>
+          </li>
+        </ol>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-3">
+        <a href="https://decoupled.io/docs" class="flex-1 justify-center inline-flex items-center font-semibold rounded-lg transition-all duration-200 bg-primary-600 text-white hover:bg-primary-700 px-5 py-2.5 text-base gap-2">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 3h6v6" />
+            <path d="M10 14 21 3" />
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+          </svg>
+          View Documentation
+        </a>
+        <a href="https://github.com/nextagencyio/decoupled-components-astro" class="flex-1 justify-center inline-flex items-center font-semibold rounded-lg transition-all duration-200 border-2 border-primary-600 text-primary-600 hover:bg-primary-50 px-5 py-2.5 text-base">
+          View on GitHub
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

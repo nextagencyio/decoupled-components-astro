@@ -1,0 +1,11 @@
+---
+import EditorLayout from '@/src/layouts/EditorLayout.astro'
+import EditorIsland from '@/src/components/editor/EditorIsland'
+
+const { nid } = Astro.params
+const token = Astro.url.searchParams.get('token')
+---
+
+<EditorLayout title="Puck Editor">
+  <EditorIsland nid={nid!} token={token} client:only="react" />
+</EditorLayout>

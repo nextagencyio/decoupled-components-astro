@@ -1,0 +1,128 @@
+---
+/**
+ * Newsletter form — uses vanilla HTML form with progressive enhancement.
+ * No client JS needed for the basic form. The success state is handled
+ * via a small inline script.
+ */
+import { clsx } from 'clsx'
+import type { ParagraphNewsletter as ParagraphNewsletterType } from '@/lib/types'
+import Badge from '../ui/Badge.astro'
+
+interface Props extends ParagraphNewsletterType {}
+
+const {
+  eyebrow,
+  title,
+  subtitle,
+  placeholder = 'Enter your email',
+  buttonText = 'Subscribe',
+  backgroundColor = 'dark',
+} = Astro.props
+
+const isDark = backgroundColor === 'dark'
+const isGradient = backgroundColor === 'gradient'
+---
+
+<section
+  class={clsx(
+    'section-padding',
+    isDark && 'bg-gray-900',
+    isGradient && 'bg-gradient-to-br from-primary-600 to-primary-800',
+    backgroundColor === 'light' && 'bg-gray-50'
+  )}
+>
+  <div class="container-wide">
+    <div class="max-w-2xl mx-auto text-center">
+      {eyebrow && (
+        <Badge variant={isDark || isGradient ? 'primary' : 'default'} class="mb-4">
+          {eyebrow}
+        </Badge>
+      )}
+      {title && (
+        <h2
+          class={clsx(
+            'text-3xl md:text-4xl font-bold mb-4',
+            isDark || isGradient ? 'text-white' : 'text-gray-900'
+          )}
+        >
+          {title}
+        </h2>
+      )}
+      {subtitle && (
+        <p
+          class={clsx(
+            'text-lg mb-8',
+            isDark || isGradient ? 'text-gray-300' : 'text-gray-600'
+          )}
+        >
+          {subtitle}
+        </p>
+      )}
+
+      <form class="newsletter-form flex flex-col sm:flex-row gap-3" data-newsletter>
+        <input
+          type="email"
+          name="email"
+          placeholder={placeholder}
+          required
+          class={clsx(
+            'flex-1 px-5 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-primary-500',
+            isDark || isGradient
+              ? 'bg-white/10 border-white/20 text-white placeholder:text-gray-400'
+              : 'bg-white border-gray-300 text-gray-900 placeholder:text-gray-400'
+          )}
+        />
+        <button
+          type="submit"
+          class={clsx(
+            'inline-flex items-center justify-center gap-2 font-semibold rounded-lg px-7 py-3.5 text-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 shadow-sm',
+            isDark || isGradient
+              ? 'bg-secondary-600 text-white hover:bg-secondary-700 focus:ring-secondary-500'
+              : 'bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500'
+          )}
+        >
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+          {buttonText}
+        </button>
+      </form>
+
+      <div
+        class={clsx(
+          'newsletter-success hidden items-center justify-center gap-2 py-4',
+          isDark || isGradient ? 'text-green-400' : 'text-green-600'
+        )}
+        data-newsletter-success
+      >
+        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        <span class="font-medium">Thanks for subscribing!</span>
+      </div>
+
+      <p
+        class={clsx(
+          'mt-4 text-sm',
+          isDark || isGradient ? 'text-gray-400' : 'text-gray-500'
+        )}
+      >
+        No spam, unsubscribe at any time.
+      </p>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll('[data-newsletter]').forEach((form) => {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault()
+      const parent = form.parentElement!
+      form.classList.add('hidden')
+      parent.querySelector('[data-newsletter-success]')?.classList.remove('hidden')
+      parent.querySelector('[data-newsletter-success]')?.classList.add('flex')
+    })
+  })
+</script>

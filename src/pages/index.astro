@@ -1,0 +1,41 @@
+---
+import SiteLayout from '@/src/layouts/SiteLayout.astro'
+import ParagraphRenderer from '@/src/components/paragraphs/ParagraphRenderer.astro'
+import SetupGuide from '@/src/components/SetupGuide.astro'
+import { getClient } from '@/lib/drupal-client'
+import { transformSections } from '@/lib/drupal-utils'
+import type { NodeLandingPage } from '@/schema/client'
+
+let sections = null
+let showSetup = false
+
+if (!import.meta.env.DRUPAL_BASE_URL && import.meta.env.PUBLIC_DEMO_MODE === 'false') {
+  showSetup = true
+} else {
+  const client = getClient()
+
+  for (const path of ['/', '/node/1']) {
+    try {
+      const page = await client.getEntryByPath(path) as NodeLandingPage | null
+      if (page?.sections) {
+        sections = transformSections(page.sections)
+        break
+      }
+    } catch (error) {
+      console.error(`Error fetching homepage at ${path}:`, error)
+    }
+  }
+
+  if (!sections) {
+    showSetup = true
+  }
+}
+---
+
+<SiteLayout>
+  {showSetup ? (
+    <SetupGuide />
+  ) : sections ? (
+    <ParagraphRenderer sections={sections} />
+  ) : null}
+</SiteLayout>

@@ -1,0 +1,52 @@
+---
+import { clsx } from 'clsx'
+import type { ParagraphText as ParagraphTextType } from '@/lib/types'
+import Badge from '../ui/Badge.astro'
+import Button from '../ui/Button.astro'
+
+interface Props extends ParagraphTextType {}
+
+const {
+  eyebrow,
+  title,
+  content,
+  alignment = 'left',
+  ctaText,
+  ctaUrl,
+} = Astro.props
+
+const isCentered = alignment === 'center'
+---
+
+<section class="section-padding bg-white">
+  <div class="container-wide">
+    <div class={clsx('max-w-3xl', isCentered ? 'mx-auto text-center' : '')}>
+      {eyebrow && (
+        <Badge variant="primary" class="mb-4">
+          {eyebrow}
+        </Badge>
+      )}
+
+      {title && (
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+          {title}
+        </h2>
+      )}
+
+      {content && (
+        <div
+          class={clsx('prose prose-lg max-w-none', isCentered && 'prose-center')}
+          set:html={content}
+        />
+      )}
+
+      {ctaText && ctaUrl && (
+        <div class={clsx('mt-8', isCentered && 'text-center')}>
+          <Button variant="primary" href={ctaUrl}>
+            {ctaText}
+          </Button>
+        </div>
+      )}
+    </div>
+  </div>
+</section>
