@@ -57,7 +57,6 @@ src/
     editor/[nid].astro       # Visual editor (React island)
     404.astro
     api/                     # API endpoints
-      revalidate.ts
       drupal-puck/
       auth/validate.ts
       graphql.ts
@@ -114,8 +113,6 @@ All built as zero-JS Astro components:
 DRUPAL_BASE_URL=https://your-space.decoupled.website
 DRUPAL_CLIENT_ID=your-client-id
 DRUPAL_CLIENT_SECRET=your-client-secret
-DRUPAL_REVALIDATE_SECRET=random-secret
-
 # Demo Mode (default: true)
 PUBLIC_DEMO_MODE=true
 
@@ -141,12 +138,21 @@ npm run setup-content  # Import content model to Drupal
 npm run sync-schema    # Regenerate TypeScript types from Drupal
 ```
 
+## Rendering & Caching
+
+Astro runs in **SSR mode** (`output: 'server'`) — every request fetches fresh content from Drupal via GraphQL. No revalidation webhooks needed.
+
+- Content updates are **instant** — no cache to invalidate
+- Astro renders HTML via string concatenation (faster than React SSR)
+- Zero JS shipped to the browser means instant paint with no hydration step
+- For production, put a CDN (Cloudflare, Netlify Edge) in front for edge caching
+
 ## Deployment
 
 Astro with the Node adapter runs on any Node.js host:
 
-- **Vercel** - `npx astro add vercel` and deploy
 - **Netlify** - `npx astro add netlify` and deploy
+- **Vercel** - `npx astro add vercel` and deploy
 - **Docker/VPS** - `npm run build && node dist/server/entry.mjs`
 
 ## Resources
