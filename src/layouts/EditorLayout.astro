@@ -1,5 +1,6 @@
 ---
 import BaseLayout from './BaseLayout.astro'
+import '@puckeditor/core/dist/index.css'
 
 interface Props {
   title?: string
@@ -9,6 +10,5 @@ const { title = 'Puck Editor' } = Astro.props
 ---
 
 <BaseLayout title={title}>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@puckeditor/core/puck.css" />
   <slot />
 </BaseLayout>
