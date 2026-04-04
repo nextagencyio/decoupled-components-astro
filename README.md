@@ -149,11 +149,33 @@ Astro runs in **SSR mode** (`output: 'server'`) — every request fetches fresh 
 
 ## Deployment
 
-Astro with the Node adapter runs on any Node.js host:
+The starter auto-detects your platform and uses the right adapter — no config changes needed.
 
-- **Netlify** - `npx astro add netlify` and deploy
-- **Vercel** - `npx astro add vercel` and deploy
-- **Docker/VPS** - `npm run build && node dist/server/entry.mjs`
+### Netlify
+
+Connect your repo in the Netlify dashboard. It reads `netlify.toml` automatically.
+
+Required env vars: `DRUPAL_BASE_URL`, `DRUPAL_CLIENT_ID`, `DRUPAL_CLIENT_SECRET`, `PUBLIC_DEMO_MODE=false`
+
+### Vercel
+
+Import your repo in the Vercel dashboard. Framework preset: **Astro**.
+
+Required env vars: same as above.
+
+### Docker / VPS
+
+```bash
+npm run build
+node dist/server/entry.mjs   # Runs on port 4321
+```
+
+### How auto-detection works
+
+`astro.config.mjs` checks environment variables set by each platform:
+- `NETLIFY=true` → uses `@astrojs/netlify` (serverless functions)
+- `VERCEL=1` → uses `@astrojs/vercel` (serverless functions)
+- Neither → uses `@astrojs/node` (standalone server)
 
 ## Resources
 

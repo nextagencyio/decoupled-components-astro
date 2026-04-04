@@ -60,12 +60,35 @@ export function deleteSession(sessionId: string): void {
 /**
  * Extract and validate the Puck session from a request's cookies.
  * Returns the session if valid, null otherwise.
+ *
+ * On serverless platforms (Netlify/Vercel), in-memory sessions don't
+ * persist across function instances. Falls back to the raw puck_token
+ * cookie which can be sent directly to Drupal for authentication.
  */
 export function getSessionFromRequest(request: Request): PuckSession | null {
   const cookieHeader = request.headers.get('cookie') || ''
-  const match = cookieHeader.match(new RegExp(`${COOKIE_NAME}=([^;]+)`))
-  if (!match) return null
-  return getSession(match[1])
+
+  // Try in-memory session first (works on persistent Node servers).
+  const sessionMatch = cookieHeader.match(new RegExp(`${COOKIE_NAME}=([^;]+)`))
+  if (sessionMatch) {
+    const session = getSession(sessionMatch[1])
+    if (session) return session
+  }
+
+  // Serverless fallback: use the raw puck_token cookie.
+  const tokenMatch = cookieHeader.match(/puck_token=([^;]+)/)
+  if (tokenMatch) {
+    return {
+      uid: 0,
+      name: '',
+      nid: 0,
+      token: tokenMatch[1],
+      createdAt: Date.now(),
+      lastSeen: Date.now(),
+    }
+  }
+
+  return null
 }
 
 /**
