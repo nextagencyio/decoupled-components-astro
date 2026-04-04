@@ -1,5 +1,7 @@
 # Decoupled Components - Astro
 
+![Decoupled Components Astro](docs/screenshot.png)
+
 An **Astro** starter template for [Decoupled.io](https://decoupled.io) - headless Drupal with a visual editor. This is the Astro port of [decoupled-components](https://github.com/nextagencyio/decoupled-components) (Next.js).
 
 ## Why Astro?
