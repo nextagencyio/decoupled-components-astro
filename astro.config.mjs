@@ -13,8 +13,8 @@ export default defineConfig({
     tailwind(),
   ],
   vite: {
-    ssr: {
-      noExternal: ['decoupled-client'],
+    optimizeDeps: {
+      include: ['decoupled-client'],
     },
   },
 })
