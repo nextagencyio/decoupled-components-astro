@@ -44,21 +44,20 @@ export const POST: APIRoute = async ({ request }) => {
     const isProduction = import.meta.env.PROD
     const cookieFlags = `HttpOnly; ${isProduction ? 'Secure; ' : ''}SameSite=Lax; Path=/; Max-Age=${8 * 60 * 60}`
 
+    const headers = new Headers()
+    headers.set('Content-Type', 'application/json')
+    headers.append('Set-Cookie', `${COOKIE_NAME}=${sessionId}; ${cookieFlags}`)
+    // Store raw token in a separate cookie for serverless fallback.
+    // In-memory sessions don't persist across function instances,
+    // so this cookie lets us re-authenticate with Drupal directly.
+    headers.append('Set-Cookie', `puck_token=${token}; ${cookieFlags}`)
+
     return new Response(JSON.stringify({
       success: true,
       user: { uid: data.user.uid, name: data.user.name },
       node: data.node,
     }), {
-      headers: {
-        'Content-Type': 'application/json',
-        'Set-Cookie': [
-          `${COOKIE_NAME}=${sessionId}; ${cookieFlags}`,
-          // Store raw token in a separate cookie for serverless fallback.
-          // In-memory sessions don't persist across function instances,
-          // so this cookie lets us re-authenticate with Drupal directly.
-          `puck_token=${token}; ${cookieFlags}`,
-        ].join(', '),
-      },
+      headers,
     })
   } catch (error: any) {
     console.error('Auth validation error:', error)
