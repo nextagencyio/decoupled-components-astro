@@ -76,6 +76,30 @@ When using the `import_content` MCP tool, always call `get_import_example` first
 
 When building a new site, always create a dedicated space via `create_space` MCP tool rather than reusing an existing one. Spaces take ~90-100 seconds to provision — check status with `get_space` before importing content.
 
+### Connecting frontend to Drupal
+
+After creating a space and importing content:
+
+1. Get credentials via `get_oauth_credentials` MCP tool
+2. Set these in `.env.local` (Astro uses `DRUPAL_BASE_URL`, not `NEXT_PUBLIC_DRUPAL_BASE_URL`):
+   ```env
+   DRUPAL_BASE_URL=https://your-space.decoupled.website
+   DRUPAL_CLIENT_ID=your-client-id
+   DRUPAL_CLIENT_SECRET=your-client-secret
+   DRUPAL_REVALIDATE_SECRET=your-secret
+   PUBLIC_DEMO_MODE=false
+   ```
+3. Run `npm run sync-schema` to generate typed client from the live schema
+4. Restart the dev server
+
+### Path aliases
+
+Drupal's pathauto module may auto-generate path aliases from node titles, overriding the `path` requested during import. After importing, verify actual aliases via GraphQL:
+```graphql
+{ nodeLandingPages(first: 10) { nodes { id title path } } }
+```
+Update navigation links to match the actual aliases. The homepage (`index.astro`) falls back to `getEntries('NodeLandingPage', { first: 1 })` if the `/` path doesn't resolve.
+
 ### Generated files (schema/)
 
 | File | Purpose |
