@@ -54,6 +54,10 @@ When using the `import_content` MCP tool, always call `get_import_example` first
 - **Values wrapper**: Fields go inside a `"values"` object, not at the top level.
 - **Path aliases**: Set via `"path"` at the top level (not inside values).
 - **References**: Use `@id` syntax to reference other content items defined earlier in the array.
+- **Payload size limit**: The `import_content` API will return a 502 Bad Gateway if the payload is too large. Break imports into smaller batches:
+  1. **Model first**: Import all content type definitions with `"content": []` (empty). Can be split further into 2-3 calls if the model itself is large (15+ type definitions).
+  2. **Content in batches**: Import content separately, grouped logically (e.g., homepage + its paragraphs in one call, articles in another, events + team in another). Each batch should contain roughly 15-25 content items max.
+  3. **Paragraph references**: Keep `@id` references and the items they reference in the same batch — the API resolves references within a single import call.
 
 ```json
 {
@@ -117,6 +121,8 @@ When `PUBLIC_DEMO_MODE` is not `'false'`, the client reads from `data/mock/*.jso
 
 **Landing pages** (homepage, about) go through the `TypedClient` mock client. **Standalone content types** (articles, events, team) import their mock JSON directly in their page files — they don't use the mock client since they aren't part of the generated schema until `sync-schema` runs against a Drupal backend that has those types.
 
+**Mock file status**: `data/mock/homepage.json` and `data/mock/pages.json` exist by default. The standalone mock files (`articles.json`, `events.json`, `team.json`) must be created manually when adding those content types — they are not auto-generated. The corresponding page files (`src/pages/news.astro`, `src/pages/events.astro`, `src/pages/team.astro`) must also be created as standalone Astro pages since the catch-all `[...slug].astro` only handles landing pages.
+
 ## CLI Commands
 
 ```bash
@@ -165,6 +171,9 @@ src/
   pages/
     index.astro              Homepage (landing page from Drupal)
     [...slug].astro          Catch-all (any landing page by path)
+    news.astro               News/blog listing (standalone, reads mock or Drupal)
+    events.astro             Events listing (standalone, reads mock or Drupal)
+    team.astro               Team page (standalone, reads mock or Drupal)
     node/[nid].astro         Puck preview by node ID
     404.astro                Custom 404 page
     editor/[nid].astro       Puck visual editor
