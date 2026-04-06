@@ -171,9 +171,6 @@ src/
   pages/
     index.astro              Homepage (landing page from Drupal)
     [...slug].astro          Catch-all (any landing page by path)
-    news.astro               News/blog listing (standalone, reads mock or Drupal)
-    events.astro             Events listing (standalone, reads mock or Drupal)
-    team.astro               Team page (standalone, reads mock or Drupal)
     node/[nid].astro         Puck preview by node ID
     404.astro                Custom 404 page
     editor/[nid].astro       Puck visual editor
