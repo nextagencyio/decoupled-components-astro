@@ -55,9 +55,11 @@ When using the `import_content` MCP tool, always call `get_import_example` first
 - **Path aliases**: Set via `"path"` at the top level (not inside values).
 - **References**: Use `@id` syntax to reference other content items defined earlier in the array.
 - **Payload size limit**: The `import_content` API will return a 502 Bad Gateway if the payload is too large. Break imports into smaller batches:
-  1. **Model first**: Import all content type definitions with `"content": []` (empty). Can be split further into 2-3 calls if the model itself is large (15+ type definitions).
+  1. **Model first**: Import all content type definitions with `"content": []` (empty). Split into batches of 3-4 type definitions per call if the model is large.
   2. **Content in batches**: Import content separately, grouped logically (e.g., homepage + its paragraphs in one call, articles in another, events + team in another). Each batch should contain roughly 15-25 content items max.
-  3. **Paragraph references**: Keep `@id` references and the items they reference in the same batch — the API resolves references within a single import call.
+  3. **Paragraph references**: Keep `@id` references and the items they reference in the same batch — the API resolves references **only within a single import call**. Cross-batch references silently fail. This means a landing page node and **all** of its paragraph sections must be in the same API call.
+- **Existing nodes are skipped, not updated**: If a node with the same path already exists, `import_content` will skip it. You cannot overwrite existing content — you must create a new node with a different path.
+- **Ensure all paragraph fields match Drupal**: After importing model definitions, the generated `schema/client.ts` may include fields in its GraphQL queries that don't exist on the Drupal type (e.g., querying `eyebrow` on a type that doesn't have it). This causes runtime GraphQL errors. Always cross-check `schema/schema.graphql` against `schema/client.ts` after running `sync-schema`. If they diverge, add the missing field to Drupal and re-run `sync-schema`.
 
 ```json
 {
@@ -122,6 +124,21 @@ When `PUBLIC_DEMO_MODE` is not `'false'`, the client reads from `data/mock/*.jso
 **Landing pages** (homepage, about) go through the `TypedClient` mock client. **Standalone content types** (articles, events, team) import their mock JSON directly in their page files — they don't use the mock client since they aren't part of the generated schema until `sync-schema` runs against a Drupal backend that has those types.
 
 **Mock file status**: `data/mock/homepage.json` and `data/mock/pages.json` exist by default. The standalone mock files (`articles.json`, `events.json`, `team.json`) must be created manually when adding those content types — they are not auto-generated. The corresponding page files (`src/pages/news.astro`, `src/pages/events.astro`, `src/pages/team.astro`) must also be created as standalone Astro pages since the catch-all `[...slug].astro` only handles landing pages.
+
+## Theming
+
+Site colors are controlled via the `primary` palette in `tailwind.config.js`. All components (paragraphs, header, footer, standalone pages) use `primary-*` Tailwind classes (e.g., `bg-primary-700`, `text-primary-600`). To change the site's color scheme, update the `primary` object in `tailwind.config.js` — never hardcode color names like `green-700` or `blue-600` in components.
+
+The `gradient` background option on hero sections uses the `gradient-primary` utility class defined in `src/styles/globals.css`, which maps to `from-primary-600 to-primary-700`.
+
+## Sync Schema
+
+Always run `npm run sync-schema` after:
+- Creating or modifying content types/fields in Drupal
+- Connecting to a new Drupal space
+- Adding fields via `import_content` MCP tool
+
+The generated `schema/client.ts` is the single source of truth for TypeScript types and GraphQL queries. If the site throws GraphQL errors after schema changes, re-run `sync-schema` to regenerate.
 
 ## CLI Commands
 
