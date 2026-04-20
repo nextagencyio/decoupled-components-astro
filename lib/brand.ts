@@ -74,6 +74,12 @@ const FALLBACK: BrandConfig = {
 }
 
 export async function getBrandConfig(): Promise<BrandConfig> {
+  // In dev, bypass the module-level cache so edits in Drupal show up on
+  // reload. In prod (astro build), cache for the whole build so the endpoint
+  // is hit exactly once.
+  if (import.meta.env.DEV) {
+    return fetchBrand()
+  }
   if (_cache) return _cache
   _cache = fetchBrand()
   return _cache
