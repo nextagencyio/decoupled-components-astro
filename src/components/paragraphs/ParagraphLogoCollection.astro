@@ -28,7 +28,10 @@ function secureUrl(url: string): string {
 
     <div class="flex flex-wrap items-center justify-center gap-6 md:gap-10 lg:gap-14">
       {(logos ?? []).map((logo: Logo) => {
-        const hasValidImage = logo.image?.url && logo.image.url.startsWith('http')
+        // Treat auto-generated dc_import placeholders as "no image" so we
+        // fall back to the text-only style used on components.decoupled.io.
+        const imageUrl = logo.image?.url ?? ''
+        const hasValidImage = imageUrl.startsWith('http') && !imageUrl.includes('placeholder')
 
         return (
           <div class="flex items-center justify-center transition-colors">
