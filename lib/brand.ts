@@ -52,6 +52,9 @@ export interface BrandConfig {
 }
 
 let _cache: Promise<BrandConfig> | null = null
+// Only surface the "couldn't reach dc_brand" warning once per process.
+// Otherwise dev server logs flood with it on every page navigation.
+let _warnedOnce = false
 
 /**
  * Fallback used when Drupal is unreachable or not configured.
@@ -91,14 +94,24 @@ async function fetchBrand(): Promise<BrandConfig> {
   try {
     const res = await fetch(url, { headers: { Accept: 'application/json' } })
     if (!res.ok) {
-      console.warn(`[dc_brand] ${url} returned ${res.status}; using fallback`)
+      warnOnce(
+        res.status === 404
+          ? `[dc_brand] module not enabled on ${baseUrl} — rendering with default brand tokens`
+          : `[dc_brand] ${url} returned ${res.status} — rendering with default brand tokens`
+      )
       return FALLBACK
     }
     return (await res.json()) as BrandConfig
   } catch (err) {
-    console.warn(`[dc_brand] fetch failed (${(err as Error).message}); using fallback`)
+    warnOnce(`[dc_brand] fetch failed (${(err as Error).message}) — rendering with default brand tokens`)
     return FALLBACK
   }
+}
+
+function warnOnce(msg: string): void {
+  if (_warnedOnce) return
+  console.warn(msg)
+  _warnedOnce = true
 }
 
 /**
