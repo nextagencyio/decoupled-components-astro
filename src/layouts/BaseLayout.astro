@@ -1,5 +1,6 @@
 ---
 import '@/src/styles/globals.css'
+import { getBrandConfig, brandCssVars, brandFontHrefs } from '@/lib/brand'
 
 interface Props {
   title?: string
@@ -10,6 +11,11 @@ const {
   title = 'LaunchPad - Ship Products Faster',
   description = 'The platform built for modern teams to ship products faster with powerful components and integrations.',
 } = Astro.props
+
+const brand = await getBrandConfig()
+const cssVars = brandCssVars(brand)
+const fontHrefs = brandFontHrefs(brand)
+const favicon = brand.logos.light?.url ?? '/favicon.svg'
 ---
 
 <!doctype html>
@@ -18,9 +24,11 @@ const {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    <link rel="icon" href={favicon} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    {fontHrefs.map((href) => <link rel="stylesheet" href={href} />)}
+    <style set:html={cssVars}></style>
     <title>{title}</title>
   </head>
   <body class="font-sans">
