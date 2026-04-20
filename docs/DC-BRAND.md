@@ -83,6 +83,14 @@ space is wired up.
 
 ## Troubleshooting
 
+- **`[dc_brand] fetch failed (fetch failed); using fallback` in the Astro console**:
+  Node's `fetch()` can't verify DDEV's self-signed cert. Either point
+  `DRUPAL_BASE_URL` at `http://…` (DDEV serves both schemes) or prefix your
+  dev command with `NODE_TLS_REJECT_UNAUTHORIZED=0`. Do **not** set that
+  flag in production.
+- **First `drush en dc_brand` fails with an assertion error about
+  `dc_admin.info.yml`**: a pre-existing cache-registry staleness unrelated to
+  this module. Run `ddev drush cr`, then `drush en dc_brand -y` again.
 - **CORS error in dev**: the endpoint already sends `Access-Control-Allow-Origin: *`.
   If you still see one, confirm the request URL matches `DRUPAL_BASE_URL`.
 - **Fonts not loading**: check Network tab for the `fonts.googleapis.com`
