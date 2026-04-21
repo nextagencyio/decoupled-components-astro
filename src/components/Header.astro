@@ -8,15 +8,24 @@ import { getBrandConfig } from '@/lib/brand'
 
 const brand = await getBrandConfig()
 // Header sits on a light background → use the light-mode logo. If nothing
-// is uploaded, fall back to the built-in icon + LaunchPad wordmark.
+// is uploaded, fall back to the built-in icon + the site name (from
+// Drupal's system.site config via /api/dc-brand/settings). Final
+// fallback is "LaunchPad" so unwired local dev still renders.
 const logo = brand.logos.light
+const siteName = brand.site?.name || 'LaunchPad'
 
-const navigation = [
-  { name: 'Features', href: '/#features' },
-  { name: 'Services', href: '/services' },
-  { name: 'Pricing', href: '/#pricing' },
-  { name: 'About', href: '/about' },
-]
+// Navigation comes from dc_brand.settings:nav when configured (set by
+// editors on /admin/config/brand or by import flows). Fallback is the
+// starter's hardcoded list so unwired local dev keeps rendering.
+const configuredNav = (brand.nav ?? []).filter((n) => n.label && n.href)
+const navigation = configuredNav.length > 0
+  ? configuredNav.map((n) => ({ name: n.label, href: n.href }))
+  : [
+      { name: 'Features', href: '/#features' },
+      { name: 'Services', href: '/services' },
+      { name: 'Pricing', href: '/#pricing' },
+      { name: 'About', href: '/about' },
+    ]
 ---
 
 <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
@@ -35,7 +44,7 @@ const navigation = [
                 <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
               </svg>
             </div>
-            <span class="font-bold text-xl text-gray-900">LaunchPad</span>
+            <span class="font-bold text-xl text-gray-900">{siteName}</span>
           </>
         )}
       </a>
