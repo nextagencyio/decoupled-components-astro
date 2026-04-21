@@ -1,0 +1,101 @@
+---
+/**
+ * Logo left + nav clustered right with a single primary CTA. No
+ * "Log in" button. Compact.
+ */
+import { getBrandConfig } from '@/lib/brand'
+
+const brand = await getBrandConfig()
+const logo = brand.logos.light
+
+const navigation = [
+  { name: 'Features', href: '/#features' },
+  { name: 'Services', href: '/services' },
+  { name: 'Pricing', href: '/#pricing' },
+  { name: 'About', href: '/about' },
+]
+---
+
+<header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+  <nav class="container-wide" aria-label="Main navigation">
+    <div class="flex items-center justify-between h-16 gap-6">
+      <a href="/" class="flex items-center gap-2" aria-label="Home">
+        {logo ? (
+          <img src={logo.url} alt={logo.alt || 'Logo'} class="h-8 w-auto" />
+        ) : (
+          <>
+            <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
+                <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
+                <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" />
+                <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+              </svg>
+            </div>
+            <span class="font-bold text-xl text-gray-900">LaunchPad</span>
+          </>
+        )}
+      </a>
+
+      <div class="hidden md:flex items-center gap-6 ml-auto">
+        {navigation.map((item) => (
+          <a href={item.href} class="text-gray-600 hover:text-gray-900 font-medium transition-colors">
+            {item.name}
+          </a>
+        ))}
+        <a href="#" class="inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500 shadow-sm px-5 py-2.5 text-base">
+          Get Started
+        </a>
+      </div>
+
+      <button
+        type="button"
+        class="md:hidden p-2 text-gray-600"
+        data-mobile-toggle
+        aria-label="Toggle menu"
+      >
+        <svg class="w-6 h-6 menu-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" x2="20" y1="12" y2="12" />
+          <line x1="4" x2="20" y1="6" y2="6" />
+          <line x1="4" x2="20" y1="18" y2="18" />
+        </svg>
+        <svg class="w-6 h-6 menu-close hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 6 6 18" />
+          <path d="m6 6 12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="md:hidden py-4 border-t border-gray-100 hidden" data-mobile-menu>
+      <div class="flex flex-col gap-4">
+        {navigation.map((item) => (
+          <a href={item.href} class="text-gray-600 hover:text-gray-900 font-medium px-2 py-1">
+            {item.name}
+          </a>
+        ))}
+        <a href="#" class="inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 bg-primary-600 text-white hover:bg-primary-700 shadow-sm px-5 py-2.5 text-base mt-2">
+          Get Started
+        </a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<script>
+  const toggle = document.querySelector('[data-mobile-toggle]')
+  const menu = document.querySelector('[data-mobile-menu]')
+  const openIcon = toggle?.querySelector('.menu-open')
+  const closeIcon = toggle?.querySelector('.menu-close')
+  toggle?.addEventListener('click', () => {
+    menu?.classList.toggle('hidden')
+    openIcon?.classList.toggle('hidden')
+    closeIcon?.classList.toggle('hidden')
+  })
+  menu?.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => {
+      menu?.classList.add('hidden')
+      openIcon?.classList.remove('hidden')
+      closeIcon?.classList.add('hidden')
+    })
+  })
+</script>
