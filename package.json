@@ -13,10 +13,10 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "setup": "npx decoupled-cli@latest setup --content data/components-content.json",
-    "setup-content": "npx decoupled-cli@latest content import --file data/components-content.json",
-    "setup-content:preview": "npx decoupled-cli@latest content import --file data/components-content.json --preview",
-    "sync-schema": "npx decoupled-cli@latest schema sync"
+    "setup": "npx decoupled-cli@2.14.1 setup --content data/components-content.json",
+    "setup-content": "npx decoupled-cli@2.14.1 content import --file data/components-content.json",
+    "setup-content:preview": "npx decoupled-cli@2.14.1 content import --file data/components-content.json --preview",
+    "sync-schema": "npx decoupled-cli@2.14.1 schema sync"
   },
   "dependencies": {
     "@astrojs/netlify": "^6.6.5",
@@ -30,7 +30,8 @@
     "@tailwindcss/typography": "^0.5.16",
     "astro": "^5.8.0",
     "clsx": "^2.1.1",
-    "decoupled-client": "^0.4.0",
+    "decoupled-cli": "2.14.1",
+    "decoupled-client": "0.4.2",
     "dotenv": "^17.2.1",
     "lucide-react": "^0.539.0",
     "puck-plugin-ai": "^0.2.2",
