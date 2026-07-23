@@ -3526,14 +3526,14 @@
             "deprecationReason": null
           },
           {
-            "name": "WIDE",
-            "description": "Wide (1090)",
+            "name": "THUMBNAIL",
+            "description": "Thumbnail (100×100)",
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "THUMBNAIL",
-            "description": "Thumbnail (100×100)",
+            "name": "WIDE",
+            "description": "Wide (1090)",
             "isDeprecated": false,
             "deprecationReason": null
           }

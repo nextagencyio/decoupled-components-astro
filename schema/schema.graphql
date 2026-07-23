@@ -152,8 +152,8 @@ enum ImageStyleAvailable {
   LARGE
   MEDIA_LIBRARY
   MEDIUM
-  WIDE
   THUMBNAIL
+  WIDE
 }
 
 type ImageStyleDerivative {

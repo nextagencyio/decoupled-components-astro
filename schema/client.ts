@@ -262,15 +262,19 @@ export function createTypedClient(client: DecoupledClient): TypedClient {
   return {
     async getEntries(type, options) {
       const config = QUERIES[type]
+      if (!config) throw new Error(`No query defined for content type: ${type}`)
       const data = await client.query(config.list, options)
       // Extract nodes from the connection response
       const key = Object.keys(data)[0]
+      if (!key) return []
       return data[key]?.nodes ?? []
     },
     async getEntry(type, id) {
       const config = QUERIES[type]
+      if (!config) throw new Error(`No query defined for content type: ${type}`)
       const data = await client.query(config.single, { id })
       const key = Object.keys(data)[0]
+      if (!key) return null
       return data[key] ?? null
     },
     async getEntryByPath(path) {
