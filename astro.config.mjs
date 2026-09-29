@@ -1,6 +1,6 @@
 import { defineConfig } from 'astro/config'
-import react from '@astrojs/react'
 import tailwind from '@astrojs/tailwind'
+import canvas from '@drupal-canvas/headless-astro/integration'
 
 /**
  * Auto-detect deployment platform and select the right adapter.
@@ -23,11 +23,15 @@ async function getAdapter() {
 }
 
 export default defineConfig({
+  // Canvas draft preview needs per-request rendering.
   output: 'server',
   adapter: await getAdapter(),
   integrations: [
-    react(),
     tailwind(),
+    // Drupal Canvas headless: draft preview routes, the component metadata
+    // endpoint Canvas syncs the library from, and CSP frame-ancestors for
+    // the editor iframe. Components live in src/canvas (canvas.config.json).
+    canvas(),
   ],
   vite: {
     optimizeDeps: {

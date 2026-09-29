@@ -1,0 +1,70 @@
+---
+import { clsx } from 'clsx'
+import type { Image } from '@/lib/types'
+import Card from '../../ui/Card.astro'
+
+interface Props {
+  quote: string
+  authorName: string
+  authorTitle?: string
+  authorCompany?: string
+  authorImage?: Image
+  rating?: number
+}
+
+const { quote, authorName, authorTitle, authorCompany, authorImage, rating } = Astro.props
+
+function secureUrl(url: string): string {
+  return url.replace(/^http:\/\//, 'https://')
+}
+---
+
+<Card variant="bordered" class="h-full flex flex-col">
+  {rating && (
+    <div class="flex gap-1 mb-4">
+      {[...Array(5)].map((_, i) => (
+        <svg
+          class={clsx('w-5 h-5', i < rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-200')}
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+        </svg>
+      ))}
+    </div>
+  )}
+  <blockquote class="flex-1 mb-6">
+    <svg class="w-8 h-8 text-primary-200 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V21z" />
+      <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" />
+    </svg>
+    <p class="text-gray-700 leading-relaxed">{quote}</p>
+  </blockquote>
+  <div class="flex items-center gap-4 pt-4 border-t border-gray-100">
+    {authorImage?.url ? (
+      <img
+        src={secureUrl(authorImage.url)}
+        alt={authorName ?? ''}
+        width="48"
+        height="48"
+        class="rounded-full w-12 h-12 object-cover"
+      />
+    ) : (
+      <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
+        <span class="text-primary-600 font-semibold text-lg">
+          {authorName?.charAt(0) ?? '?'}
+        </span>
+      </div>
+    )}
+    <div>
+      <div class="font-semibold text-gray-900">{authorName}</div>
+      {(authorTitle || authorCompany) && (
+        <div class="text-sm text-gray-500">
+          {authorTitle}
+          {authorTitle && authorCompany && ' at '}
+          {authorCompany}
+        </div>
+      )}
+    </div>
+  </div>
+</Card>

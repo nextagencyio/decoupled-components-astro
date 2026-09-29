@@ -1,0 +1,8 @@
+---
+import PricingTierCard from '@/src/components/paragraphs/items/PricingTierCard.astro'
+import { toLines } from '@/lib/canvas-props'
+
+const { features, ...props } = Astro.props
+---
+
+<PricingTierCard {...props} features={toLines(features)} />

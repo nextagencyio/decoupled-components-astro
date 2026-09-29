@@ -1,0 +1,8 @@
+---
+import ParagraphSidebyside from '@/src/components/paragraphs/ParagraphSidebyside.astro'
+import { toImage } from '@/lib/canvas-props'
+
+const { image, ...props } = Astro.props
+---
+
+<ParagraphSidebyside {...props} image={toImage(image)}><slot name="features" /></ParagraphSidebyside>

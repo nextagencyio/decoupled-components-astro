@@ -1,0 +1,37 @@
+---
+import DraftSession from '@drupal-canvas/headless-astro/DraftSession.astro'
+
+/**
+ * Draft preview banner. The SDK owns the session lifecycle and renewal
+ * protocol with the Canvas editor; inside the editor iframe nothing renders
+ * except the expired state. Exiting draft mode is a POST form so no
+ * prefetch can end the session.
+ */
+---
+
+<DraftSession>
+  <div
+    data-draft-session-view="expired"
+    class="flex items-center justify-between gap-4 bg-red-200 px-4 py-2 text-sm text-red-950"
+  >
+    <span>
+      <strong>Draft preview session expired.</strong> Showing only published content.
+    </span>
+    <span class="flex gap-4">
+      <a data-draft-session-renew-link class="font-semibold underline">Renew session</a>
+      <form method="POST" action="/api/disable-draft">
+        <button type="submit" class="cursor-pointer font-semibold underline">Exit draft mode</button>
+      </form>
+    </span>
+  </div>
+
+  <div
+    data-draft-session-view="active"
+    class="flex items-center justify-between gap-4 bg-amber-300 px-4 py-2 text-sm text-amber-950"
+  >
+    <span><strong>Draft mode is active.</strong> You may be seeing unpublished content.</span>
+    <form method="POST" action="/api/disable-draft">
+      <button type="submit" class="cursor-pointer font-semibold underline">Exit draft mode</button>
+    </form>
+  </div>
+</DraftSession>

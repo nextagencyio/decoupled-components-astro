@@ -43,36 +43,22 @@ src/
       ParagraphNewsletter.astro   # Inline script for form
       ParagraphText.astro
       ParagraphRenderer.astro     # Switch/router
-      react/                      # React versions (for Puck editor only)
     ui/                      # Astro UI primitives
-    editor/                  # React islands for Puck editor
     Header.astro             # Inline script for mobile menu
     Footer.astro
   layouts/
     BaseLayout.astro         # Root HTML
     SiteLayout.astro         # Header + Footer wrapper
-    EditorLayout.astro       # Puck CSS
   pages/
     index.astro              # Homepage
     [...slug].astro          # Dynamic pages
-    node/[nid].astro         # Puck preview
-    editor/[nid].astro       # Visual editor (React island)
     404.astro
-    api/                     # API endpoints
-      drupal-puck/
-      auth/validate.ts
-      graphql.ts
-      jsonapi/
-      upload.ts
-      editor-presence.ts
-      ai/generate.ts
-      puck/
 lib/                         # Shared utilities
   drupal-client.ts           # TypedClient factory
   mock-client.ts             # Demo mode client
   types.ts                   # Paragraph type definitions
-  puck-config.tsx            # Auto-generated editor config
-  puck-auth.ts               # Session management
+  canvas.ts                  # Drupal Canvas page loader
+  canvas-props.ts            # Canvas prop -> paragraph prop adapters
 schema/                      # Auto-generated (do not edit)
 data/
   components-content.json    # Content model (single source of truth)
@@ -108,6 +94,28 @@ All built as zero-JS Astro components:
 9. **Newsletter** - Email signup with progressive enhancement
 10. **Text Block** - Rich HTML content with CTA
 
+## Visual editing with Drupal Canvas
+
+Pages are built in the Drupal Canvas editor (`/canvas` on the Drupal site, which
+needs the `dc_canvas` module). Canvas embeds this app as its live preview and syncs
+its component library from it, using `@drupal-canvas/headless-astro`.
+
+- **Components:** `src/canvas/<machine_name>/{component.yml,index.astro}`. There are
+  10 sections plus 7 child items (cards, FAQ items, testimonials, pricing tiers,
+  logos, stats, features), which go into their parent's slot. Each `index.astro` is
+  a thin wrapper around the same `src/components/paragraphs/*` markup that renders
+  GraphQL paragraph pages, so there is one source of markup.
+- **Routing:** `[...slug].astro` and `index.astro` try Canvas first (`lib/canvas.ts`,
+  which is draft-aware) and fall back to GraphQL landing pages. The homepage is the
+  Drupal front page, or a Canvas page with the alias `/home`.
+- **Injected routes:** `/api/draft`, `/api/draft/renew`, `/api/disable-draft`,
+  `/api/canvas/components` and `/api/canvas/jsonapi/*`. These, plus the CSP
+  `frame-ancestors` header for the editor iframe, come from the integration.
+- **Adding a component:** create `src/canvas/<name>/component.yml` and `index.astro`,
+  then reload the Canvas editor to sync it.
+- **Env:** `CANVAS_SITE_URL` defaults to `DRUPAL_BASE_URL`. Draft preview needs SSR
+  and a Chromium browser, because the preview cookie is partitioned.
+
 ## Environment Variables
 
 ```env
@@ -118,15 +126,6 @@ DRUPAL_CLIENT_SECRET=your-client-secret
 # Demo Mode (default: true)
 PUBLIC_DEMO_MODE=true
 
-# AI (optional)
-GROQ_API_KEY=your-groq-key
-PUCK_API_KEY=your-puck-cloud-key
-PUBLIC_PUCK_AI_PROVIDER=groq
-
-# Cloudinary (optional, for image uploads in editor)
-PUBLIC_CLOUDINARY_CLOUD_NAME=your-cloud
-PUBLIC_CLOUDINARY_API_KEY=your-key
-CLOUDINARY_API_SECRET=your-secret
 ```
 
 ## Scripts
@@ -183,4 +182,4 @@ node dist/server/entry.mjs   # Runs on port 4321
 
 - [Decoupled.io](https://decoupled.io) - Headless Drupal platform
 - [Astro Docs](https://docs.astro.build)
-- [Puck Editor](https://puckeditor.com) - Visual page builder
+- [Drupal Canvas](https://www.drupal.org/project/canvas) - Visual page builder

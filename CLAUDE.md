@@ -1,6 +1,6 @@
 # Decoupled Components
 
-Astro frontend for Drupal with section-based landing pages, a visual editor (Puck), and AI-powered page generation. Uses `decoupled-client` for type-safe Drupal queries — no hand-written GraphQL needed.
+Astro frontend for Drupal with section-based landing pages, and the Drupal Canvas visual editor. Uses `decoupled-client` for type-safe Drupal queries — no hand-written GraphQL needed.
 
 ## Quick Start
 
@@ -163,11 +163,6 @@ DRUPAL_CLIENT_ID=your-client-id
 DRUPAL_CLIENT_SECRET=your-client-secret
 DRUPAL_REVALIDATE_SECRET=your-random-secret
 
-# Puck AI (optional — pick one)
-PUBLIC_PUCK_AI_PROVIDER=groq          # or puck-cloud
-GROQ_API_KEY=your-groq-key            # for groq provider
-PUCK_API_KEY=your-puck-cloud-key       # for puck-cloud provider
-
 # Demo mode
 PUBLIC_DEMO_MODE=false                 # set to anything else to use mock data
 ```
@@ -180,32 +175,44 @@ DRUPAL_CLIENT_ID=local-client
 DRUPAL_CLIENT_SECRET=local-secret
 ```
 
+## Visual editing with Drupal Canvas
+
+Pages are built in the Drupal Canvas editor (`/canvas` on the Drupal site, which
+needs the `dc_canvas` module). Canvas embeds this app as its live preview and syncs
+its component library from it, using `@drupal-canvas/headless-astro`.
+
+- **Components:** `src/canvas/<machine_name>/{component.yml,index.astro}`. There are
+  10 sections plus 7 child items (cards, FAQ items, testimonials, pricing tiers,
+  logos, stats, features), which go into their parent's slot. Each `index.astro` is
+  a thin wrapper around the same `src/components/paragraphs/*` markup that renders
+  GraphQL paragraph pages, so there is one source of markup.
+- **Routing:** `[...slug].astro` and `index.astro` try Canvas first (`lib/canvas.ts`,
+  which is draft-aware) and fall back to GraphQL landing pages. The homepage is the
+  Drupal front page, or a Canvas page with the alias `/home`.
+- **Injected routes:** `/api/draft`, `/api/draft/renew`, `/api/disable-draft`,
+  `/api/canvas/components` and `/api/canvas/jsonapi/*`. These, plus the CSP
+  `frame-ancestors` header for the editor iframe, come from the integration.
+- **Adding a component:** create `src/canvas/<name>/component.yml` and `index.astro`,
+  then reload the Canvas editor to sync it.
+- **Env:** `CANVAS_SITE_URL` defaults to `DRUPAL_BASE_URL`. Draft preview needs SSR
+  and a Chromium browser, because the preview cookie is partitioned.
+
 ## Architecture
 
-Astro SSR app (`output: 'server'`) with auto-detected adapter (Node.js, Netlify, or Vercel). Uses Astro components for server-rendered pages and React islands for interactive features (Puck editor).
+Astro SSR app (`output: 'server'`) with auto-detected adapter (Node.js, Netlify, or Vercel). Uses Astro components for all rendering (no React). Drupal Canvas integration via `@drupal-canvas/headless-astro`.
 
 ```
 src/
   pages/
     index.astro              Homepage (landing page from Drupal)
     [...slug].astro          Catch-all (any landing page by path)
-    node/[nid].astro         Puck preview by node ID
     404.astro                Custom 404 page
-    editor/[nid].astro       Puck visual editor
     api/
-      drupal-puck/[...path].ts   Puck load/save proxy
-      puck/[...all].ts           Puck Cloud AI proxy
-      ai/generate.ts             Groq AI endpoint
-      auth/validate.ts           Editor token validation
       graphql.ts                 GraphQL proxy with OAuth
-      jsonapi/[...path].ts       JSON:API proxy
-      editor-presence.ts         Multi-editor detection
-      upload.ts                  File upload endpoint
 
   layouts/
     BaseLayout.astro         HTML shell (<html>, <head>, <body>)
     SiteLayout.astro         Site chrome (Header + main + Footer)
-    EditorLayout.astro       Minimal layout for Puck editor
 
   components/
     Header.astro             Site header/navigation
@@ -214,17 +221,14 @@ src/
     paragraphs/
       ParagraphRenderer.astro    Dispatches sections to paragraph components
       Paragraph*.astro           Astro server components for each paragraph type
-      react/Paragraph*.tsx       React versions (used by Puck editor islands)
+      items/*.astro              List items (cards, FAQs, tiers…) shared by GraphQL and Canvas
     ui/
       Badge.astro            Reusable UI components
       Button.astro
       Card.astro
-    editor/
-      EditorIsland.tsx       Puck editor React island
-      ConfirmDialog.tsx      Editor confirmation dialog
-    puck/
-      ImageField.tsx         Custom Puck image field
-    PuckRendererIsland.tsx   React island for Puck preview rendering
+    DraftBanner.astro        Canvas draft-session banner
+  canvas/
+    <machine_name>/          Canvas components (component.yml + index.astro wrapper)
 
   styles/
     globals.css              Global styles + Tailwind imports
@@ -235,8 +239,8 @@ lib/
   demo-mode.ts               isDemoMode() check
   queries.ts                 Hand-crafted GraphQL for landing pages
   drupal-utils.ts            Text field extraction helpers
-  puck-config.tsx            Auto-generated Puck config from content model
-  component-registry.tsx     Maps component names to React components
+  canvas.ts                  loadCanvasPage(): draft-aware Canvas page loader
+  canvas-props.ts            Canvas prop shapes -> paragraph prop shapes
 
 schema/                      Auto-generated by sync-schema (do not edit)
   client.ts                  Typed interfaces + queries + factory
@@ -256,11 +260,10 @@ data/
 
 ### Component pattern
 
-Pages use `.astro` components for server rendering. Each paragraph type has two versions:
-- `src/components/paragraphs/Paragraph*.astro` — Astro server component (used in site pages)
-- `src/components/paragraphs/react/Paragraph*.tsx` — React component (used by Puck editor islands)
-
-Interactive features use React islands via `client:only="react"` or `client:load` directives.
+Pages use `.astro` components for server rendering; there is one implementation per section:
+- `src/components/paragraphs/Paragraph*.astro` renders a section from a GraphQL array (`cards`, `items`, …) or, when none is given, from its default slot.
+- `src/components/paragraphs/items/*.astro` renders one list item.
+- `src/canvas/<name>/index.astro` adapts Canvas props (images, rich text) and forwards the Canvas slot into the paragraph component.
 
 ## Content Model
 
@@ -279,6 +282,6 @@ All defined in `data/components-content.json`. Import with `npm run setup-conten
 | Newsletter | `paragraph.newsletter` | title, subtitle, button_text |
 | Text Block | `paragraph.text_block` | title, content, alignment, CTA |
 
-## Puck Editor
+## Canvas Editor
 
-Accessed via Drupal's "Design Studio" tab on landing page nodes. Two AI providers available via `PUBLIC_PUCK_AI_PROVIDER` env var (`groq` or `puck-cloud`).
+Replaces the former Puck editor. Open `/canvas` on the Drupal site; see "Visual editing with Drupal Canvas" above.

@@ -2,6 +2,7 @@
 import { clsx } from 'clsx'
 import type { ParagraphStats as ParagraphStatsType } from '@/lib/types'
 import Badge from '../ui/Badge.astro'
+import StatItem from './items/StatItem.astro'
 
 interface Props extends ParagraphStatsType {}
 
@@ -27,21 +28,9 @@ const isLight = backgroundColor === 'light'
     )}
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-      {(stats ?? []).map((stat) => (
-        <div class="text-center">
-          <div class="text-4xl md:text-5xl font-bold text-primary-600 mb-2">
-            {stat.value}
-          </div>
-          <div class="text-lg font-semibold text-gray-900 mb-1">
-            {stat.label}
-          </div>
-          {stat.description && (
-            <div class="text-sm text-gray-500">
-              {stat.description}
-            </div>
-          )}
-        </div>
-      ))}
+      {Array.isArray(stats) && stats.length > 0
+        ? stats.map((stat) => <StatItem {...stat} />)
+        : <slot />}
     </div>
   </div>
 </section>

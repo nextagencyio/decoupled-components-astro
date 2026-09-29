@@ -1,0 +1,18 @@
+name: Feature Item
+machineName: feature_item
+status: true
+required:
+- title
+props:
+  properties:
+    title:
+      title: Title
+      type: string
+      examples:
+      - Visual editing
+    description:
+      title: Description
+      type: string
+      examples:
+      - Compose pages from your own components.
+slots: {}

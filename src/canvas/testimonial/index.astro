@@ -1,0 +1,8 @@
+---
+import TestimonialCard from '@/src/components/paragraphs/items/TestimonialCard.astro'
+import { toImage } from '@/lib/canvas-props'
+
+const { authorImage, ...props } = Astro.props
+---
+
+<TestimonialCard {...props} authorImage={toImage(authorImage)} />

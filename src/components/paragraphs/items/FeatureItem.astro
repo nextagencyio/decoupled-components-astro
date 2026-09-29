@@ -1,0 +1,22 @@
+---
+interface Props {
+  title: string
+  description?: string
+}
+
+const { title, description } = Astro.props
+---
+
+<li class="flex gap-4">
+  <div class="flex-shrink-0 w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+    <svg class="w-5 h-5 text-primary-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+  </div>
+  <div>
+    <h3 class="font-semibold text-gray-900">{title}</h3>
+    {description && (
+      <p class="text-gray-600 text-sm">{description}</p>
+    )}
+  </div>
+</li>

@@ -1,40 +1,56 @@
 ---
+import CanvasComponentTree from '@drupal-canvas/headless-astro/CanvasComponentTree.astro'
 import SiteLayout from '@/src/layouts/SiteLayout.astro'
 import ParagraphRenderer from '@/src/components/paragraphs/ParagraphRenderer.astro'
 import SetupGuide from '@/src/components/SetupGuide.astro'
 import { getClient } from '@/lib/drupal-client'
 import { transformSections } from '@/lib/drupal-utils'
+import { loadCanvasPage, isPageRedirect, type CanvasPage } from '@/lib/canvas'
 import type { NodeLandingPage } from '@/schema/client'
 
+let canvasPage: CanvasPage | null = null
 let sections = null
 let showSetup = false
 
 if (!import.meta.env.DRUPAL_BASE_URL && import.meta.env.PUBLIC_DEMO_MODE === 'false') {
   showSetup = true
 } else {
-  const client = getClient()
-
-  for (const path of ['/', '/node/1']) {
-    try {
-      const page = await client.getEntryByPath(path) as NodeLandingPage | null
-      if (page?.sections) {
-        sections = transformSections(page.sections)
-        break
-      }
-    } catch (error) {
-      console.error(`Error fetching homepage at ${path}:`, error)
+  // Canvas homepage: the Drupal front page, or a Canvas page aliased /home
+  // (the Drupal front page on decoupled.io tenants is the admin landing).
+  for (const path of ['/', '/home']) {
+    const result = await loadCanvasPage(Astro, path)
+    if (result && !isPageRedirect(result)) {
+      canvasPage = result
+      break
     }
   }
 
-  if (!sections) {
+  if (!canvasPage) {
+    const client = getClient()
+    for (const path of ['/', '/node/1']) {
+      try {
+        const page = await client.getEntryByPath(path) as NodeLandingPage | null
+        if (page?.sections) {
+          sections = transformSections(page.sections)
+          break
+        }
+      } catch (error) {
+        console.error(`Error fetching homepage at ${path}:`, error)
+      }
+    }
+  }
+
+  if (!canvasPage && !sections) {
     showSetup = true
   }
 }
 ---
 
-<SiteLayout>
+<SiteLayout title={canvasPage?.head?.title}>
   {showSetup ? (
     <SetupGuide />
+  ) : canvasPage ? (
+    <CanvasComponentTree tree={canvasPage.content} />
   ) : sections ? (
     <ParagraphRenderer sections={sections} />
   ) : null}

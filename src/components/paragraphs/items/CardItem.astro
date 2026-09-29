@@ -1,0 +1,34 @@
+---
+import Card from '../../ui/Card.astro'
+
+interface Props {
+  icon?: string
+  title: string
+  description?: string
+  linkText?: string
+  linkUrl?: string
+}
+
+const { icon, title, description, linkText, linkUrl } = Astro.props
+---
+
+<Card variant="bordered" class="h-full hover:border-primary-200 hover:shadow-md transition-all">
+  {icon && (
+    <div class="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center mb-4">
+      <span class="text-primary-600 text-lg font-bold">{icon.charAt(0)}</span>
+    </div>
+  )}
+  <div class="mb-4">
+    <h3 class="font-semibold text-gray-900 text-xl">{title}</h3>
+  </div>
+  <div class="text-gray-600">
+    {description && (
+      <p class="text-gray-600 mb-4">{description}</p>
+    )}
+    {linkText && linkUrl && (
+      <a href={linkUrl} class="text-primary-600 hover:text-primary-700 font-semibold">
+        {linkText} &rarr;
+      </a>
+    )}
+  </div>
+</Card>

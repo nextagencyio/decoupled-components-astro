@@ -1,0 +1,8 @@
+---
+import LogoItem from '@/src/components/paragraphs/items/LogoItem.astro'
+import { toImage } from '@/lib/canvas-props'
+
+const { image, ...props } = Astro.props
+---
+
+<LogoItem {...props} image={toImage(image)} />

@@ -3,6 +3,7 @@ import { clsx } from 'clsx'
 import type { ParagraphSidebyside as ParagraphSidebysideType } from '@/lib/types'
 import Badge from '../ui/Badge.astro'
 import Button from '../ui/Button.astro'
+import FeatureItem from './items/FeatureItem.astro'
 
 interface Props extends ParagraphSidebysideType {}
 
@@ -47,23 +48,13 @@ function secureUrl(url: string): string {
           <div class="prose prose-lg text-gray-600 mb-8" set:html={content} />
         )}
 
-        {Array.isArray(features) && features.length > 0 && (
+        {Array.isArray(features) && features.length > 0 ? (
           <ul class="space-y-4 mb-8">
-            {features.map((feature) => (
-              <li class="flex gap-4">
-                <div class="flex-shrink-0 w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
-                  <svg class="w-5 h-5 text-primary-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
-                </div>
-                <div>
-                  <h3 class="font-semibold text-gray-900">{feature.title}</h3>
-                  {feature.description && (
-                    <p class="text-gray-600 text-sm">{feature.description}</p>
-                  )}
-                </div>
-              </li>
-            ))}
+            {features.map((feature) => <FeatureItem {...feature} />)}
+          </ul>
+        ) : Astro.slots.has('default') && (
+          <ul class="space-y-4 mb-8">
+            <slot />
           </ul>
         )}
 
