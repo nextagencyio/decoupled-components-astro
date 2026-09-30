@@ -5,6 +5,11 @@ required:
 - title
 props:
   properties:
+    icon:
+      title: Icon name
+      type: string
+      examples:
+      - Check
     title:
       title: Title
       type: string

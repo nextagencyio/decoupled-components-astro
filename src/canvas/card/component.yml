@@ -6,7 +6,7 @@ required:
 props:
   properties:
     icon:
-      title: Icon letter
+      title: Icon name
       type: string
       examples:
       - Zap
