@@ -1,0 +1,12 @@
+---
+import ParagraphHero from '@/src/components/paragraphs/ParagraphHero.astro'
+import { toImage } from '@/lib/canvas-props'
+
+const { backgroundImage, backgroundColor, ...props } = Astro.props
+---
+
+<ParagraphHero
+  {...props}
+  backgroundColor={backgroundColor === 'white' ? undefined : backgroundColor}
+  backgroundImage={toImage(backgroundImage)}
+/>

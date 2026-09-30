@@ -1,0 +1,73 @@
+---
+import { clsx } from 'clsx'
+import Badge from '../../ui/Badge.astro'
+import Button from '../../ui/Button.astro'
+import Card from '../../ui/Card.astro'
+
+interface Props {
+  name: string
+  price: string
+  billingPeriod?: string
+  description?: string
+  features?: string[] | null
+  isFeatured?: boolean
+  ctaText?: string
+  ctaUrl?: string
+}
+
+const { name, price, billingPeriod, description, features, isFeatured, ctaText, ctaUrl } = Astro.props
+---
+
+<Card
+  variant={isFeatured ? 'highlighted' : 'bordered'}
+  class={clsx(
+    'h-full flex flex-col relative',
+    isFeatured && 'scale-105 z-10'
+  )}
+>
+  {isFeatured && (
+    <Badge variant="primary" class="absolute -top-3 left-1/2 -translate-x-1/2">
+      Most Popular
+    </Badge>
+  )}
+
+  <div class="text-center mb-6">
+    <h3 class="text-xl font-semibold text-gray-900 mb-2">
+      {name}
+    </h3>
+    <div class="flex items-baseline justify-center gap-1">
+      <span class="text-4xl md:text-5xl font-bold text-gray-900">
+        {price}
+      </span>
+      {billingPeriod && (
+        <span class="text-gray-500">{billingPeriod}</span>
+      )}
+    </div>
+    {description && (
+      <p class="mt-2 text-sm text-gray-500">{description}</p>
+    )}
+  </div>
+
+  {Array.isArray(features) && features.length > 0 && (
+    <ul class="flex-1 space-y-3 mb-8">
+      {features.map((feature: string) => (
+        <li class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-primary-500 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          <span class="text-gray-600">{feature}</span>
+        </li>
+      ))}
+    </ul>
+  )}
+
+  {ctaText && ctaUrl && (
+    <Button
+      variant={isFeatured ? 'primary' : 'outline'}
+      href={ctaUrl}
+      class="w-full justify-center"
+    >
+      {ctaText}
+    </Button>
+  )}
+</Card>

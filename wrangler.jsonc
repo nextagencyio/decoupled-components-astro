@@ -1,0 +1,11 @@
+{
+  // Cloudflare Workers deployment (build with DEPLOY_TARGET=cloudflare).
+  "name": "decoupled-components-astro",
+  "main": "./dist/_worker.js/index.js",
+  "compatibility_date": "2025-04-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS"
+  }
+}

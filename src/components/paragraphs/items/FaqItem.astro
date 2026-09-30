@@ -1,0 +1,31 @@
+---
+interface Props {
+  question: string
+  answer?: string
+  open?: boolean
+}
+
+const { question, answer, open = false } = Astro.props
+---
+
+<details class="group overflow-hidden" open={open}>
+  <summary class="flex w-full items-center justify-between p-6 text-left hover:bg-gray-50 transition-colors cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+    <span class="text-lg font-medium text-gray-900 pr-4">
+      {question}
+    </span>
+    <svg
+      class="flex-shrink-0 w-5 h-5 text-gray-500 transition-transform duration-200 group-open:rotate-180"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <polyline points="6 9 12 15 18 9"></polyline>
+    </svg>
+  </summary>
+  {answer && (
+    <div class="px-6 pb-6 prose prose-gray max-w-none" set:html={answer} />
+  )}
+</details>
