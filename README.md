@@ -162,6 +162,17 @@ Connect your repo in the Netlify dashboard. It reads `netlify.toml` automaticall
 
 Required env vars: `DRUPAL_BASE_URL`, `DRUPAL_CLIENT_ID`, `DRUPAL_CLIENT_SECRET`, `PUBLIC_DEMO_MODE=false`
 
+### Cloudflare
+
+```bash
+npm run build:cloudflare   # DEPLOY_TARGET=cloudflare astro build
+npx wrangler deploy        # or `npx wrangler dev` to run the worker locally
+```
+
+Cloudflare Pages and Workers Builds are detected automatically (`CF_PAGES`,
+`WORKERS_CI`). Set the Drupal variables as Worker vars/secrets (`.dev.vars` locally).
+`wrangler.jsonc` needs `nodejs_compat`, which the Canvas draft routes rely on.
+
 ### Vercel
 
 Import your repo in the Vercel dashboard. Framework preset: **Astro**.

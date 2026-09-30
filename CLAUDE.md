@@ -203,7 +203,7 @@ its component library from it, using `@drupal-canvas/headless-astro`.
 
 ## Architecture
 
-Astro SSR app (`output: 'server'`) with auto-detected adapter (Node.js, Netlify, or Vercel). Uses Astro components for all rendering (no React). Drupal Canvas integration via `@drupal-canvas/headless-astro`.
+Astro SSR app (`output: 'server'`) with auto-detected adapter (Node.js, Netlify, Vercel, or Cloudflare via `npm run build:cloudflare`). Keep server code edge-safe: no static imports of Node-only modules (see `src/middleware.ts`, `src/canvas-components-route.ts`). Uses Astro components for all rendering (no React). Drupal Canvas integration via `@drupal-canvas/headless-astro`.
 
 ```
 src/
