@@ -13,7 +13,10 @@ export interface CanvasImage {
 }
 
 export function toImage(image?: CanvasImage | null): Image | undefined {
-  return image?.src ? { url: image.src, alt: image.alt, width: image.width, height: image.height } : undefined
+  if (!image?.src) return undefined
+  // Canvas appends an ?alternateWidths= srcset template to media image URLs.
+  const url = image.src.replace(/[?&]alternateWidths=[^&]*/, '')
+  return { url, alt: image.alt, width: image.width, height: image.height }
 }
 
 /** Splits a rich-text list (or newline separated text) into plain items. */
