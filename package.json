@@ -16,7 +16,8 @@
     "setup": "npx decoupled-cli@2.14.1 setup --content data/components-content.json",
     "setup-content": "npx decoupled-cli@2.14.1 content import --file data/components-content.json",
     "setup-content:preview": "npx decoupled-cli@2.14.1 content import --file data/components-content.json --preview",
-    "sync-schema": "npx decoupled-cli@2.14.1 schema sync"
+    "sync-schema": "npx decoupled-cli@2.14.1 schema sync",
+    "check:canvas": "node scripts/check-canvas-components.mjs ../decoupled-components/canvas"
   },
   "dependencies": {
     "@astrojs/netlify": "^6.6.5",

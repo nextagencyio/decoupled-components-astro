@@ -113,6 +113,10 @@ its component library from it, using `@drupal-canvas/headless-astro`.
   `frame-ancestors` header for the editor iframe, come from the integration.
 - **Adding a component:** create `src/canvas/<name>/component.yml` and `index.astro`,
   then reload the Canvas editor to sync it.
+- **Shared definitions:** the `component.yml` files are shared with the Next.js
+  starter (`decoupled-components`) and must stay identical, because Canvas refuses to
+  sync a component whose definition differs between two frontends of one site.
+  `npm run check:canvas` compares them against a sibling checkout; CI runs it too.
 - **Env:** `CANVAS_SITE_URL` defaults to `DRUPAL_BASE_URL`. Draft preview needs SSR
   and a Chromium browser, because the preview cookie is partitioned.
 
